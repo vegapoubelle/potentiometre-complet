@@ -2,7 +2,7 @@
 const int capteur_inductif = 13;
 const int avance = 17;
 const int arriere = 16;
-const int Enable = 4;   //sortie PWM avec LedC pour faire varier la vitesse
+const int enable = 4;   //sortie PWM avec LedC pour faire varier la vitesse
 const int valeur_verre = 1410;
 const int valeur_plastique = 1393;
 int courant = 0;
@@ -28,7 +28,7 @@ void setup() {
   digitalWrite(avance, LOW);
   digitalWrite(arriere, LOW);
   ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(Enable, LEDC_CHANNEL_0);
+  ledcAttachPin(enable, LEDC_CHANNEL_0);
 
 }
 
