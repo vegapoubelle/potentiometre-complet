@@ -1,4 +1,6 @@
 //1er prog avec entrée sortie sur circuit imprimé poubelle
+#include <Arduino.h>
+#include "BasicStepperDriver.h"
 const int capteur_inductif = 13;
 const int avance = 17;
 const int arriere = 16;
@@ -9,6 +11,20 @@ int courant = 0;
 int sortie_boucle = 0 ;
 //potentiomètre palpeur sur A4
 //courant palpeur sur A5
+
+#define MOTOR_STEPS 200
+#define RPM 120
+
+#define MICROSTEPS 1 // 1 = Full step, 2 = half step
+
+#define DIR 15
+#define STEP 2
+#define ENABLE 0
+
+BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
+
+//Uncomment line to use enable/disable functionality
+//BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP, ENABLE);
 
 // use first channel of 16 channels (started from zero)
 #define LEDC_CHANNEL_0     0
@@ -21,6 +37,7 @@ int sortie_boucle = 0 ;
 
 void setup() {
   // initialize serial communication at 9600 bits per second:
+  stepper.begin(RPM, MICROSTEPS);
   Serial.begin(9600);
   pinMode(capteur_inductif, INPUT);
   pinMode(avance, OUTPUT);
@@ -46,19 +63,23 @@ void loop() {
       Serial.println("direction bac plastique");  //direction bac plastique
       sortie_boucle++;
       Serial.println(courant);
-    } else if ((valeur_plastique > courant) && (courant >= valeur_verre)) {
+    } else if ((valeur_plastique < courant) && (courant >= valeur_verre)) {
       Serial.println("direction bac verre"); //direction bac verre
       sortie_boucle++;
       Serial.println(courant);
     }
   }
     digitalWrite(avance, LOW);
-    ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
+    ledcWrite( LEDC_CHANNEL_0, 0);
+    sortie_boucle = 0 //rapport cyclique de 0 à 8191
     delay(5000);
     if ( capteur_inductif == 1)
     {
-      //direction bac metal
-
+      /*
+      stepper.rotate(360);
+      stepper.move(-MOTOR_STEPS*MICROSTEPS);
+      delay(5000);
+     */
     }
 
     while ( analogRead(A4) > 100 )  //*************Rentrée Palpeur
