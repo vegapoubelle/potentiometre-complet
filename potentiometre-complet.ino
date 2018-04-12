@@ -8,8 +8,8 @@ const int enable = 4;   //sortie PWM avec LedC pour faire varier la vitesse
 const int valeur_verre = 1410;
 const int valeur_plastique = 1393;
 int courant = 0;
-int courant1 = 0;
-int courant2 = 0;
+int position1 = 0;
+int position2 = 0;
 int sortie_boucle = 0 ;
 //potentiomètre palpeur sur A4
 //courant palpeur sur A5
@@ -57,27 +57,25 @@ void loop() {
   //Serial.println(sensorValue);
   sortie_boucle = 0 ;
   courant = 0;
-  courant1 = 0;
-  courant2 = 0;
+  position1 = 0;
+  position2 = 0;
   while (( analogRead(A4) < 4000 ) && (sortie_boucle == 0))  //*************sortie Palpeur ( capteur_inductif == 0)
   { digitalWrite(avance, HIGH);
     ledcWrite( LEDC_CHANNEL_0, 6500);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
     courant = analogRead(A5);
     Serial.println(courant);
     delay(200);
-    if ( courant > 5 ) {
-      courant1 = analogRead(A5);
+    if ( courant > 590 ) {
+      position1 = analogRead(A4);
+      Serial.println(position1);
       ledcWrite(LEDC_CHANNEL_0, 8191);
+      position2 = analogRead(A4);
+      Serial.println(position2);
       delay(500);
-      courant2 = analogRead(A5);
-      Serial.println(courant1);
-      Serial.println(courant2);
-      Serial.print("difference:");
-      Serial.println(courant2 - courant1);
-      if ( 977 <= (courant2 - courant1) && (courant2 - courant1) <= 1000) {
-        Serial.println("direction bac verre1");  //direction bac verre
+      if (position2 - position1 > 0 ) {
+        Serial.println("direction bac plastique");  //direction bac verre
         sortie_boucle++;
-      } else if ( 970 <= (courant2 - courant1) && (courant2 - courant1) <= 976) {
+      } else if (position2 - position1 = 0 ) {
         Serial.println("direction bac plastique2"); //direction bac plastique
         sortie_boucle++;
 
