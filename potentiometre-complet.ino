@@ -62,8 +62,7 @@ void loop() {
   courant = 0;
   position1 = 0;
   position2 = 0;
-  int sortie_premiere = 0;
-  while ((analogRead(A4) < 4000 ) && (sortie_premiere == 0)) {
+  if ( analogRead(A4) < 4000 ) {
     digitalWrite(avance, HIGH);
     ledcWrite( LEDC_CHANNEL_0, 8191);
     Serial.println("coincer la bouteille");
@@ -76,7 +75,6 @@ void loop() {
     digitalWrite(arriere, LOW);
     ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
     delay(1000);
-    sortie_premiere++;
   }
   while (( analogRead(A4) < 4000 ) && (sortie_boucle == 0))  //*************sortie Palpeur
   { digitalWrite(avance, HIGH);
