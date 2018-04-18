@@ -10,7 +10,9 @@ const int valeur_plastique = 1393;
 int courant = 0;
 int position1 = 0;
 int position2 = 0;
-int sortie_boucle = 0 ;
+int bac_plastique = 0;
+int bac_verre = 0;
+int bac_metal = 0;
 //potentiomètre palpeur sur A4
 //courant palpeur sur A5
 
@@ -48,61 +50,68 @@ void setup() {
   digitalWrite(arriere, LOW);
   ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
   ledcAttachPin(enable, LEDC_CHANNEL_0);
-
+  Serial.println(analogRead(A4));
 }
 
 void loop() {
   // read the input on analog pin 0:
   // print out the value you read:
   //Serial.println(sensorValue);
-  sortie_boucle = 0 ;
+  bac_verre = 0;
+  bac_plastique = 0;
+  bac_metal = 0;
   courant = 0;
   position1 = 0;
   position2 = 0;
-  while (( analogRead(A4) < 4000 ) && (sortie_boucle == 0))  //*************sortie Palpeur ( capteur_inductif == 0)
+  Serial.println(analogRead(A4));
+  while ( analogRead(A4) < 4000 ) //*************sortie Palpeur ( capteur_inductif == 0)
   { digitalWrite(avance, HIGH);
-    ledcWrite( LEDC_CHANNEL_0, 6500);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
+    ledcWrite( LEDC_CHANNEL_0, 8191);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
     courant = analogRead(A5);
     Serial.println(courant);
     delay(200);
     if ( courant > 590 ) {
       position1 = analogRead(A4);
-      Serial.println(position1);
+      Serial.print(position1);
       ledcWrite(LEDC_CHANNEL_0, 8191);
-      position2 = analogRead(A4);
-      Serial.println(position2);
       delay(500);
+      position2 = analogRead(A4);
+      Serial.print(" ; ");
+      Serial.println(position2);
       if (position2 - position1 > 0 ) {
         Serial.println("direction bac plastique");  //direction bac verre
-        sortie_boucle++;
-      } else if (position2 - position1 = 0 ) {
+        bac_verre++;
+      } else if (position2 - position1 == 0 ) {
         Serial.println("direction bac plastique2"); //direction bac plastique
-        sortie_boucle++;
+        bac_plastique++;
+
 
       }
     }
-    digitalWrite(avance, LOW);
-    ledcWrite( LEDC_CHANNEL_0, 0);
-    sortie_boucle = 0; //rapport cyclique de 0 à 8191
-    delay(5000);
-    if ( capteur_inductif == 1)
-    {
-      /*
-        stepper.rotate(360);
-        stepper.move(-MOTOR_STEPS*MICROSTEPS);
-        delay(5000);
-      */
-    }
-
-    while ( analogRead(A4) > 100 )  //*************Rentrée Palpeur
-    { digitalWrite(arriere, HIGH);
-      ledcWrite( LEDC_CHANNEL_0, 6500);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
-      delay(100);
-    }
-    digitalWrite(arriere, LOW);
-    ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
-    delay(5000);
-
-
   }
+  digitalWrite(avance, LOW);
+  ledcWrite( LEDC_CHANNEL_0, 0); //rapport cyclique de 0 à 8191
+  delay(5000);
+  /* if ( capteur_inductif == 1)
+    {
+
+       stepper.rotate(360);
+       stepper.move(-MOTOR_STEPS*MICROSTEPS);
+       delay(5000);
+     }
+  */
+
+
+  while ( analogRead(A4) > 100 )  //*************Rentrée Palpeur
+    Serial.println("rentree palpeur");
+  { digitalWrite(arriere, HIGH);
+    ledcWrite( LEDC_CHANNEL_0, 6500);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
+    delay(100);
+  }
+  digitalWrite(arriere, LOW);
+  ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
+  delay(5000);
+
+
 }
+
