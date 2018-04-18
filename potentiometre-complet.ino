@@ -62,24 +62,20 @@ void loop() {
   courant = 0;
   position1 = 0;
   position2 = 0;
-  while ( analogRead(A4) < 4000 ) {
+  if ( analogRead(A4) < 4000 ) {
     digitalWrite(avance, HIGH);
-    ledcWrite( LEDC_CHANNEL_0, 6500);
-    Serial.println("coincer la bouteille")
-  }
-  digitalWrite(avance, LOW);
-  ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
-  delay(5000);
-
-  while ( analogRead(A4) > 100 )  //*************Rentrée Palpeur
-  { digitalWrite(arriere, HIGH);
-    ledcWrite( LEDC_CHANNEL_0, 6500);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
+    ledcWrite( LEDC_CHANNEL_0, 8191);
+    Serial.println("coincer la bouteille");
+    delay(2000);
+    digitalWrite(avance, LOW);
+    ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
+    digitalWrite(arriere, HIGH);
+    ledcWrite( LEDC_CHANNEL_0, 8191);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
     delay(100);
+    digitalWrite(arriere, LOW);
+    ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
+    delay(1000);
   }
-  digitalWrite(arriere, LOW);
-  ledcWrite( LEDC_CHANNEL_0, 0);   //rapport cyclique de 0 à 8191
-  delay(5000);
-
   while (( analogRead(A4) < 4000 ) && (sortie_boucle == 0))  //*************sortie Palpeur
   { digitalWrite(avance, HIGH);
     ledcWrite( LEDC_CHANNEL_0, 6500);   //rapport cyclique de 0 à 8191 (6000 est le minimum pour déplacer le curseur)
@@ -97,13 +93,13 @@ void loop() {
         bac_plastique++;
         Serial.println("direction bac plastique");  //direction bac plastique
         sortie_boucle++;
-      } else if (position2 - position1 = 0 ) && (capteur_inductif == 0)) {
+      } else if ((position2 - position1 == 0 ) && (capteur_inductif == 0)) {
         bac_verre++;
         Serial.println("direction bac verre"); //direction bac verre
         sortie_boucle++;
       } else if ( capteur_inductif == 1) {
-      bac_metal++;
-      Serial.println("direction bac metal");
+        bac_metal++;
+        Serial.println("direction bac metal");
       }
     }
   }
@@ -125,21 +121,21 @@ void loop() {
     */
   }
   if (bac_plastique == 1) {
-      /*
+    /*
       stepper.rotate(360);
       stepper.move(-MOTOR_STEPS*MICROSTEPS);
       delay(5000);
     */
   }
   if (bac_verre == 1) {
-      /*
+    /*
       stepper.rotate(360);
       delay(5000);
-      */
+    */
   }
   /* while( capteur de fin de course == 0 ){
-   *    stepper.move(-MOTOR_STEPS*MICROSTEPS);
-   *   }
-   */
-  
+        stepper.move(-MOTOR_STEPS*MICROSTEPS);
+       }
+  */
+
 }
